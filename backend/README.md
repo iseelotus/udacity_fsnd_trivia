@@ -8,30 +8,28 @@
 
 Follow instructions to install the latest version of python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
 
-#### Virtual Enviornment
+#### Virtual Enviornment & Dependencies
 
-We recommend working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separate and organaized. Instructions for setting up a virual enviornment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+You should install `pipenv` on your machine.
 
-#### PIP Dependencies
-
-Once you have your virtual environment setup and running, install dependencies by naviging to the `/backend` directory and running:
+The following command installs the dependencies:
 
 ```bash
-pip install -r requirements.txt
+pipenv install
 ```
-
-This will install all of the required packages we selected within the `requirements.txt` file.
 
 ##### Key Dependencies
 
-- [Flask](http://flask.pocoo.org/)  is a lightweight backend microservices framework. Flask is required to handle requests and responses.
+- [Flask](http://flask.pocoo.org/) is a lightweight backend microservices framework. Flask is required to handle requests and responses.
 
-- [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use handle the lightweight sqlite database. You'll primarily work in app.py and can reference models.py. 
+- [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use handle the lightweight sqlite database. You'll primarily work in app.py and can reference models.py.
 
-- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server. 
+- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server.
 
 ## Database Setup
+
 With Postgres running, restore a database using the trivia.psql file provided. From the backend folder in terminal run:
+
 ```bash
 psql trivia < trivia.psql
 ```
@@ -43,6 +41,7 @@ From within the `backend` directory first ensure you are working using your crea
 To run the server, execute:
 
 ```bash
+pipenv shell
 export FLASK_APP=flaskr
 export FLASK_ENV=development
 flask run
@@ -50,48 +49,183 @@ flask run
 
 Setting the `FLASK_ENV` variable to `development` will detect file changes and restart the server automatically.
 
-Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application. 
+Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application.
 
-## Tasks
+## Endpoints
 
-One note before you delve into your tasks: for each endpoint you are expected to define the endpoint and response data. The frontend will be a plentiful resource because it is set up to expect certain endpoints and response data formats already. You should feel free to specify endpoints in your own way; if you do so, make sure to update the frontend or you will get some unexpected behavior. 
+### /quizzes
 
-1. Use Flask-CORS to enable cross-domain requests and set response headers. 
-2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories. 
-3. Create an endpoint to handle GET requests for all available categories. 
-4. Create an endpoint to DELETE question using a question ID. 
-5. Create an endpoint to POST a new question, which will require the question and answer text, category, and difficulty score. 
-6. Create a POST endpoint to get questions based on category. 
-7. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question. 
-8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
-9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
+#### POST
 
-REVIEW_COMMENT
+- Fetches a random question in a given category.
+- Request body; quiz_category should be given:
 ```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
+{"quiz_category": {"id": 1, "type": "science"}}
+```
+- Returns: a random question in this category with the format:
+```
+  {"success": True, "question": {"id": 1, "question": "", "answer": "", category: 0, "difficulty": 1}}
 ```
 
+### /questions
+
+#### GET
+
+- Fetches all questions
+- Optional parameter: `page`, specifies the number of questions shown in one page. The default number is 10.
+- Returns:
+
+```
+{
+  "questions": [{
+    "id": 0,
+    "question": "",
+    "answer": "",
+    "category": 0,
+    "difficulty": 0
+  }],
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "total_questions": 12
+  "success": true
+}
+```
+
+#### POST
+
+- Post a new question
+- Request body:
+
+```
+{
+    "question": "",
+    "answer": "",
+    "category": 0,
+    "difficulty"; 0
+}
+```
+
+- Returns:
+
+```
+{
+    "success": True,
+    "created": 20,
+    "questions": [{
+        "id": 0,
+        "question": "",
+        "answer": "",
+        "category": 0,
+        "difficulty": 0
+  }],
+}
+```
+
+### /questions/<question_id>
+
+#### DELETE
+
+- Delete a given question
+- Parameter: `question_id`
+- Returns:
+
+```
+{
+    "success": True,
+    "deleted": 20,
+    "questions": [{
+        "id": 0,
+        "question": "",
+        "answer": "",
+        "category": 0,
+        "difficulty": 0
+  }],
+}
+```
+
+### /categories
+
+#### GET
+
+- Get all categories
+- Returns:
+
+```
+  {
+      "categories": {
+          "1": "Science",
+          "2": "Art",
+          "3": "Geography",
+          "4": "History",
+          "5": "Entertainment",
+          "6": "Sports"
+      },
+      "success": true
+  }
+```
+
+### /categories/<category_id>/questions
+
+#### GET
+
+- Get all questions for a given category
+- Parameter: `category_id`
+- Returns:
+
+```
+{
+    "success": True,
+    "questions": [{
+        "id": 0,
+        "question": "",
+        "answer": "",
+        "category": 0,
+        "difficulty": 0
+    }],
+    "total_question": 20,
+    "current_category": 2
+}
+```
+
+### /search
+
+#### POST
+
+- Case insensitive search for questions containing the given string.
+- Request body:
+
+```
+{
+    "searchTerm": "what"
+}
+```
+
+- Returns:
+
+```
+{
+    "success": True,
+    "questions": [{
+        "id": 0,
+        "question": "",
+        "answer": "",
+        "category": 0,
+        "difficulty": 0
+    }],
+    "total_question": 20,
+}
+```
 
 ## Testing
+
 To run the tests, run
+
 ```
 dropdb trivia_test
 createdb trivia_test

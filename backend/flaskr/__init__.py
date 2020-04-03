@@ -121,7 +121,6 @@ def create_app(test_config=None):
   @app.route('/quizzes', methods=['POST'])
   def retrieve_quiz_question():
     body = request.get_json()
-    previous_question = body.get('previous_question')
     category = body.get('quiz_category')
 
     if (category['id'] == 0):
