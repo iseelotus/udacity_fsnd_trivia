@@ -132,6 +132,14 @@ def create_app(test_config=None):
       'success': True,
       'question': questions[random.randrange(0, len(questions), 1)].format()
     })
+  
+  @app.errorhandler(HTTPException)
+  def http_exception_handler(error):
+    return jsonify({
+      'success': False,
+      'error': error.code,
+      'message': error.description
+    }), error.code
 
   return app
 
@@ -148,14 +156,3 @@ def get_categories():
   for category in Category.query.all():
     categories[category.id] = category.type
   return categories
-
-
-
-"""   @app.errorhandler(HTTPException)
-  def http_exception_handler(error):
-    return jsonify({
-      'success': False,
-      'error': error.code,
-      'message': error.description
-    }), error.code
-   """

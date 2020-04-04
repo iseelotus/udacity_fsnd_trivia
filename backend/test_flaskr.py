@@ -79,6 +79,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(question, None)
     """
 
+    def test_delete_question_without_id(self):
+        res = self.client().delete('/questions')
+        data = json.loads(res.data)
+        self.assertEquals(data['success'], False)
+        self.assertEquals(data['error'], 405)
+
     def test_create_question(self):
         response = self.client().post('/questions', json=self.new_question)
         data = json.loads(response.data)
@@ -94,7 +100,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
-    
+
     def test_get_questions_by_category(self):
         category_id = 1
         res = self.client().get(f'/categories/{category_id}/questions')
@@ -103,6 +109,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
         for question in data['questions']:
             self.assertEqual(question['category'], category_id)
+
+    def test_404_get_questions_by_category(self):
+        category_id = 100
+        res = self.client().get(f'/categories/{category_id}/questions')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 404)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
